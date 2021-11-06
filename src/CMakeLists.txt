@@ -1,5 +1,5 @@
 # Make an automatic library - will be static or dynamic based on user setting
-add_library(game_lib game.cpp)
+add_library(game_lib game.cpp tilemap.cpp tileset.cpp)
 
 # We need this directory, and users of our library will need it too
 target_include_directories(game_lib PUBLIC ../include)
