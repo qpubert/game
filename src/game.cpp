@@ -16,9 +16,9 @@ Game::Game(String const &windowTitle) : windowTitle_(windowTitle)
 void Game::run()
 {
     const auto fullscreenVideoMode = VideoMode::getDesktopMode();
-    cout << "VideoMode:" << '\n'
-         << "\twidth: " << fullscreenVideoMode.width << '\n'
-         << "\theight: " << fullscreenVideoMode.height << '\n';
+    cout << "VideoMode" << '\n'
+         << "- width: " << fullscreenVideoMode.width << '\n'
+         << "- height: " << fullscreenVideoMode.height << '\n';
 
     window_.create(fullscreenVideoMode, windowTitle_, Style::Fullscreen);
 
