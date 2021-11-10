@@ -28,17 +28,21 @@ Tilemap::Tilemap(Tileset const &tileset, Vector2f const &tileSize)
 {
 }
 
-void Tilemap::setTileset(Tileset const &tileset, bool resetTileSize)
+bool Tilemap::setTileset(Tileset const &tileset, bool resetTileSize)
 {
     tilesetPtr_ = &tileset;
     if (resetTileSize)
     {
         tileSize_ = static_cast<Vector2f>(tileset.getTileSize());
+        return updateVertices();
     }
+
+    return true;
 }
 
 bool Tilemap::create(unsigned int width, unsigned int height)
 {
+    size_ = {width, height};
     if (!vertexBuffer_.create(width * height * 4))
     {
         return false;
@@ -46,6 +50,20 @@ bool Tilemap::create(unsigned int width, unsigned int height)
 
     tiles_.resize(width * height);
     fill(begin(tiles_), end(tiles_), 0);
+
+    return updateVertices();
+}
+
+void Tilemap::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    states.transform *= getTransform();
+    target.draw(vertexBuffer_, states);
+}
+
+bool Tilemap::updateVertices()
+{
+    const auto width = size_.x;
+    const auto height = size_.y;
 
     vector<Vertex> vertices(width * height * 4);
     for (size_t row = 0, tileIndex = 0; row < height; ++row)
@@ -70,10 +88,4 @@ bool Tilemap::create(unsigned int width, unsigned int height)
     }
 
     return vertexBuffer_.update(vertices.data());
-}
-
-void Tilemap::draw(sf::RenderTarget &target, sf::RenderStates states) const
-{
-    states.transform *= getTransform();
-    target.draw(vertexBuffer_, states);
 }

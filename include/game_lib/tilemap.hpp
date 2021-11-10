@@ -15,7 +15,7 @@ public:
     Tilemap(Tileset const& tileset);
     Tilemap(Tileset const& tileset, sf::Vector2f const& tileSize);
 
-    void setTileset(Tileset const& tileset, bool resetTileSize = false);
+    bool setTileset(Tileset const& tileset, bool resetTileSize = false);
 
     bool create(unsigned int width, unsigned int height);
 
@@ -23,9 +23,12 @@ public:
 
 private:
     Tileset const* tilesetPtr_;
+    sf::Vector2u size_;
     sf::Vector2f tileSize_;
     std::vector<unsigned int> tiles_;
     sf::VertexBuffer vertexBuffer_;
+
+    bool updateVertices();
 };
 
 #endif // TILEMAP_HPP
