@@ -3,16 +3,14 @@
 using namespace sf;
 using namespace std;
 
-Tileset::Tileset(Vector2u const& tileSize,
-                 unsigned int tileCount,
+Tileset::Tileset(Vector2u const &tileSize, unsigned int tileCount,
                  unsigned int columns)
-    : tileSize_(tileSize),
-      tileCount_(tileCount),
-      columns_(columns)
-{
+    : tileSize_(tileSize), tileCount_(tileCount), columns_(columns) {}
+
+bool Tileset::loadTextureFromFile(string const &filename, IntRect const &area) {
+  return texture_.loadFromFile(filename, area);
 }
 
-bool Tileset::loadTextureFromFile(string const& filename, IntRect const& area)
-{
-    return texture_.loadFromFile(filename, area);
+sf::Vector2u Tileset::getTileTexCoords(unsigned int tile) const {
+  return {tileSize_.x * (tile % columns_), tileSize_.y * (tile / columns_)};
 }
