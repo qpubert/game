@@ -3,16 +3,15 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-class Game
-{
-public:
-    Game(sf::String const& windowTitle);
+class Game {
+ public:
+  Game(sf::String const& windowTitle);
 
-    void run();
+  void run();
 
-private:
-    sf::String windowTitle_;
-    sf::RenderWindow window_;
+ private:
+  sf::String windowTitle_;
+  sf::RenderWindow window_;
 };
 
-#endif // GAME_HPP
+#endif  // GAME_HPP
