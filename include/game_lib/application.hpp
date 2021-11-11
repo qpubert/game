@@ -6,6 +6,7 @@
 class Application {
  public:
   Application(sf::String const& windowTitle);
+  ~Application() noexcept = default;
 
   void run();
 

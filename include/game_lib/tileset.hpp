@@ -7,6 +7,7 @@ class Tileset {
  public:
   Tileset(sf::Vector2u const& tileSize = sf::Vector2u(),
           unsigned int tileCount = 0, unsigned int columns = 0);
+  ~Tileset() noexcept = default;
 
   bool loadTextureFromFile(std::string const& filename,
                            sf::IntRect const& area = sf::IntRect());

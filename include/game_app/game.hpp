@@ -6,6 +6,7 @@
 class Game : public Application {
  public:
   Game();
+  ~Game() noexcept = default;
 };
 
 #endif  // GAME_HPP

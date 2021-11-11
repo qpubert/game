@@ -12,6 +12,7 @@ class Tilemap : public sf::Drawable, public sf::Transformable {
   Tilemap(sf::Vector2f const& tileSize = sf::Vector2f());
   Tilemap(Tileset const& tileset);
   Tilemap(Tileset const& tileset, sf::Vector2f const& tileSize);
+  ~Tilemap() noexcept = default;
 
   bool setTileset(Tileset const& tileset, bool resetTileSize = false);
 
