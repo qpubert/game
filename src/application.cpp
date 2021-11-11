@@ -28,7 +28,7 @@ void Application::run() {
     accumulator += clock.restart();
     if (targetUpdatesPerSecond_) {
       auto const targetUpdateElapsedTime =
-          sf::seconds(1.0f / targetUpdatesPerSecond_);
+          seconds(1.0f / targetUpdatesPerSecond_);
       while (accumulator > targetUpdateElapsedTime) {
         update(targetUpdateElapsedTime);
         accumulator -= targetUpdateElapsedTime;
@@ -57,7 +57,7 @@ void Application::handleEvents() {
   stateStack_.handleEvents(events_);
 }
 
-void Application::update(sf::Time const elapsedTime) {
+void Application::update(Time const elapsedTime) {
   stateStack_.update(elapsedTime);
 }
 
