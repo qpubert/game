@@ -8,7 +8,7 @@ int main() {
   try {
     Game game;
     game.run();
-  } catch (std::exception const &e) {
+  } catch (exception const &e) {
     cerr << e.what() << endl;
     return EXIT_FAILURE;
   }
