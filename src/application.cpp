@@ -10,7 +10,8 @@ using namespace std;
 Application::Application(String const &windowTitle,
                          int const targetUpdatesPerSecond)
     : windowTitle_(windowTitle),
-      targetUpdatesPerSecond_(targetUpdatesPerSecond) {
+      targetUpdatesPerSecond_(targetUpdatesPerSecond),
+      running_(false) {
   window_.setKeyRepeatEnabled(false);
   window_.setVerticalSyncEnabled(true);
 }
@@ -22,7 +23,8 @@ void Application::run() {
   Clock clock;
   Time accumulator;
 
-  while (window_.isOpen()) {
+  running_ = true;
+  while (running_) {
     handleEvents();
 
     accumulator += clock.restart();
@@ -39,6 +41,10 @@ void Application::run() {
     render();
     window_.display();
   }
+}
+
+void Application::stopRunning() {
+  running_ = false;
 }
 
 void Application::setTargetUpdatesPerSecond(int const targetUpdatesPerSecond) {

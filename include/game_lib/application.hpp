@@ -11,7 +11,8 @@ class Application {
   ~Application() noexcept = default;
 
   void run();
-  
+  void stopRunning();
+
   void setTargetUpdatesPerSecond(int const targetUpdatesPerSecond);
 
  protected:
@@ -22,6 +23,7 @@ class Application {
   sf::RenderWindow window_;
   std::vector<sf::Event> events_;
   int targetUpdatesPerSecond_;
+  bool running_;
 
   void handleEvents();
   void update(sf::Time const elapsedTime);
