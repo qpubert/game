@@ -3,7 +3,7 @@ add_executable(game_app game_app.cpp game.cpp)
 
 target_link_libraries(game_app PRIVATE game_lib)
 
-target_include_directories(game_lib PRIVATE ../include)
+target_include_directories(game_app PRIVATE ../include)
 
 set(GAME_RESOURCE_PATH res)
 target_compile_definitions(game_app PRIVATE RESOURCE_PATH="../${GAME_RESOURCE_PATH}")
@@ -13,3 +13,15 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/${GAME_RESOURCE_PATH}
             ${CMAKE_BINARY_DIR}/${GAME_RESOURCE_PATH})
+
+
+
+add_executable(tilemap_editor_app 
+    tilemap_editor.cpp
+    tilemap_editor_app.cpp
+    tilemap_editor_state.cpp)
+# target_compile_features(game_app PRIVATE cxx_std_17)
+
+target_link_libraries(tilemap_editor_app PRIVATE game_lib)
+
+target_include_directories(tilemap_editor_app PRIVATE ../include)
