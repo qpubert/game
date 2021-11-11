@@ -1,7 +1,9 @@
-add_executable(game_app game_app.cpp)
+add_executable(game_app game_app.cpp game.cpp)
 # target_compile_features(game_app PRIVATE cxx_std_17)
 
 target_link_libraries(game_app PRIVATE game_lib)
+
+target_include_directories(game_lib PRIVATE ../include)
 
 set(GAME_RESOURCE_PATH res)
 target_compile_definitions(game_app PRIVATE RESOURCE_PATH="../${GAME_RESOURCE_PATH}")
