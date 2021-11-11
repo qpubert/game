@@ -1,14 +1,19 @@
 #include "game_lib/application_state.hpp"
 
-void ApplicationState::handleEvents(std::vector<sf::Event> const& events) {
+using namespace sf;
+using namespace std;
+
+ApplicationState::ApplicationState(Application& application)
+    : application_(application) {}
+
+Application& ApplicationState::getApplication() { return application_; }
+
+void ApplicationState::handleEvents(vector<Event> const& events) {
   doHandleEvents(events);
 }
 
-void ApplicationState::update(sf::Time const elapsedTime) {
-  doUpdate(elapsedTime);
-}
+void ApplicationState::update(Time const elapsedTime) { doUpdate(elapsedTime); }
 
-void ApplicationState::render(sf::RenderTarget& target,
-                              sf::RenderStates states) const {
+void ApplicationState::render(RenderTarget& target, RenderStates states) const {
   doRender(target, states);
 }
