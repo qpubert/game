@@ -1,21 +1,17 @@
-#include "game_lib/game.hpp"
-
 #include <iostream>
+
+#include "game_app/game.hpp"
 
 using namespace std;
 
-int main()
-{
-    try
-    {
-        Game game("This is my window title");
-        game.run();
-    }
-    catch (std::exception const &e)
-    {
-        cerr << e.what() << endl;
-        return EXIT_FAILURE;
-    }
+int main() {
+  try {
+    Game game;
+    game.run();
+  } catch (std::exception const &e) {
+    cerr << e.what() << endl;
+    return EXIT_FAILURE;
+  }
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
