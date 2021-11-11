@@ -14,32 +14,27 @@ Application::Application(String const &windowTitle)
 
 void Application::run() {
   const auto fullscreenVideoMode = VideoMode::getDesktopMode();
-  window_.create(fullscreenVideoMode, windowTitle_, Style::Close);
+  window_.create(fullscreenVideoMode, windowTitle_, Style::Fullscreen);
 
   while (window_.isOpen()) {
-    Event event;
-    while (window_.pollEvent(event)) {
-      switch (event.type) {
-        case Event::Closed: {
-          window_.close();
-          break;
-        }
-
-        case Event::KeyPressed: {
-          switch (event.key.code) {
-            case Keyboard::Escape: {
-              window_.close();
-              break;
-            }
-          }
-        }
-
-        default:
-          break;
-      }
-    }
-
     window_.clear();
     window_.display();
   }
 }
+
+void Application::handleEvents() {
+  events_.clear();
+
+  Event event;
+  while (window_.pollEvent(event)) {
+    events_.push_back(event);
+  }
+
+  stateStack_.handleEvents(events_);
+}
+
+void Application::update(sf::Time const elapsedTime) {
+  stateStack_.update(elapsedTime);
+}
+
+void Application::render() { stateStack_.render(window_); }
