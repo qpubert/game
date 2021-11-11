@@ -52,8 +52,8 @@ void Tilemap::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 }
 
 bool Tilemap::updateVertices() {
-  const auto width = size_.x;
-  const auto height = size_.y;
+  auto const width = size_.x;
+  auto const height = size_.y;
 
   vector<Vertex> vertices(width * height * 4);
   for (size_t row = 0, tileIndex = 0; row < height; ++row) {
@@ -63,21 +63,21 @@ bool Tilemap::updateVertices() {
       auto &trVertex = vertices[tileIndex * 4 + 2];
       auto &tlVertex = vertices[tileIndex * 4 + 3];
 
-      const float leftBound = static_cast<float>(col) * tileSize_.x;
-      const float topBound = static_cast<float>(row) * tileSize_.y;
-      const float rightBound = leftBound + tileSize_.x;
-      const float bottomBound = topBound + tileSize_.y;
+      float const leftBound = static_cast<float>(col) * tileSize_.x;
+      float const topBound = static_cast<float>(row) * tileSize_.y;
+      float const rightBound = leftBound + tileSize_.x;
+      float const bottomBound = topBound + tileSize_.y;
 
       tlVertex.position = {leftBound, topBound};
       trVertex.position = {rightBound, topBound};
       brVertex.position = {rightBound, bottomBound};
       blVertex.position = {leftBound, bottomBound};
 
-      const auto tile = tiles_.at(tileIndex);
+      auto const tile = tiles_.at(tileIndex);
       if (tilesetPtr_) {
-        const auto tileTexCoords =
+        auto const tileTexCoords =
             static_cast<Vector2f>(tilesetPtr_->getTileTexCoords(tile));
-        const auto tilesetTileSize =
+        auto const tilesetTileSize =
             static_cast<Vector2f>(tilesetPtr_->getTileSize());
 
         tlVertex.texCoords = tileTexCoords;
