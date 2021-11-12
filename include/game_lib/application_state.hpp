@@ -12,6 +12,8 @@ struct Event;
 class Application;
 
 class ApplicationState {
+  friend class ApplicationStateStack;
+
  public:
   ApplicationState(Application& application);
   virtual ~ApplicationState() noexcept = default;
@@ -24,6 +26,8 @@ class ApplicationState {
               sf::RenderStates states = sf::RenderStates::Default) const;
 
  protected:
+  bool renderUnderlyingState_;
+
   virtual void doHandleEvents(std::vector<sf::Event> const& events) = 0;
   virtual void doUpdate(sf::Time const elapsedTime) = 0;
   virtual void doRender(sf::RenderTarget& target,

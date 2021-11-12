@@ -29,7 +29,14 @@ void ApplicationStateStack::update(Time const elapsedTime) {
 
 void ApplicationStateStack::render(RenderTarget& target,
                                    RenderStates states) const {
-  for (auto const& applicationState : applicationStates_) {
-    applicationState->render(target, states);
+  auto const firstStateToRenderIt =
+      find_if_not(crbegin(applicationStates_), crend(applicationStates_),
+                  [](auto const& applicationStatePtr) {
+                    return applicationStatePtr->renderUnderlyingState_;
+                  });
+
+  for (auto applicationStateIt = firstStateToRenderIt.base();
+       applicationStateIt != cend(applicationStates_); ++applicationStateIt) {
+    (*applicationStateIt)->render(target, states);
   }
 }

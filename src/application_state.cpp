@@ -4,7 +4,7 @@ using namespace sf;
 using namespace std;
 
 ApplicationState::ApplicationState(Application& application)
-    : application_(application) {}
+    : application_(application), renderUnderlyingState_(false) {}
 
 Application& ApplicationState::getApplication() { return application_; }
 
