@@ -2,6 +2,7 @@
 #include "tilemap_editor_app/tilemap_editor_state.hpp"
 
 #include <SFML/Window/Event.hpp>
+#include <cassert>
 
 #include "game_lib/application.hpp"
 #include "tilemap_editor_app/tilemap_editor.hpp"
@@ -10,7 +11,12 @@ using namespace sf;
 using namespace std;
 
 TilemapEditorState::TilemapEditorState(TilemapEditor& tilemapEditor)
-    : ApplicationState(tilemapEditor) {}
+    : ApplicationState(tilemapEditor),
+      terminal_(tilemapEditor.getWindow().getSize()) {
+  assert(
+      terminalFont_.loadFromFile(RESOURCE_PATH "/ttf/Inconsolata-Regular.ttf"));
+  terminal_.setFont(terminalFont_, false);
+}
 
 void TilemapEditorState::doHandleEvents(vector<Event> const& events) {
   for (auto const& event : events) {
@@ -33,7 +39,14 @@ void TilemapEditorState::doHandleEvents(vector<Event> const& events) {
         break;
     }
   }
+
+  terminal_.handleEvents(events);
 }
-void TilemapEditorState::doUpdate(Time const elapsedTime) {}
+void TilemapEditorState::doUpdate(Time const elapsedTime) {
+  terminal_.update(elapsedTime);
+}
+
 void TilemapEditorState::doRender(RenderTarget& target,
-                                  RenderStates states) const {}
+                                  RenderStates states) const {
+  target.draw(terminal_, states);
+}
