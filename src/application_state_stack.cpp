@@ -35,7 +35,7 @@ void ApplicationStateStack::render(RenderTarget& target,
                     return applicationStatePtr->renderUnderlyingState_;
                   });
 
-  for (auto applicationStateIt = firstStateToRenderIt.base();
+  for (auto applicationStateIt = prev(firstStateToRenderIt.base());
        applicationStateIt != cend(applicationStates_); ++applicationStateIt) {
     (*applicationStateIt)->render(target, states);
   }
