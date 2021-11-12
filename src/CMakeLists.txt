@@ -3,6 +3,7 @@ add_library(game_lib
     application.cpp 
     application_state.cpp 
     application_state_stack.cpp 
+    terminal.cpp
     tilemap.cpp 
     tileset.cpp)
 
