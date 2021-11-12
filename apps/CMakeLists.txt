@@ -5,14 +5,14 @@ target_link_libraries(game_app PRIVATE game_lib)
 
 target_include_directories(game_app PRIVATE ../include)
 
-set(GAME_RESOURCE_PATH res)
-target_compile_definitions(game_app PRIVATE RESOURCE_PATH="../${GAME_RESOURCE_PATH}")
+set(RESOURCE_PATH res)
+target_compile_definitions(game_app PRIVATE RESOURCE_PATH="../${RESOURCE_PATH}")
 
 add_custom_command(
     TARGET game_app POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/${GAME_RESOURCE_PATH}
-            ${CMAKE_BINARY_DIR}/${GAME_RESOURCE_PATH})
+            ${CMAKE_SOURCE_DIR}/${RESOURCE_PATH}
+            ${CMAKE_BINARY_DIR}/${RESOURCE_PATH})
 
 
 
@@ -25,3 +25,5 @@ add_executable(tilemap_editor_app
 target_link_libraries(tilemap_editor_app PRIVATE game_lib)
 
 target_include_directories(tilemap_editor_app PRIVATE ../include)
+
+target_compile_definitions(tilemap_editor_app PRIVATE RESOURCE_PATH="../${RESOURCE_PATH}")
