@@ -10,15 +10,32 @@ using namespace std;
 Application::Application(String const &windowTitle,
                          int const targetUpdatesPerSecond)
     : windowTitle_(windowTitle),
+      windowStyle_(Style::Close),
       targetUpdatesPerSecond_(targetUpdatesPerSecond),
       running_(false) {
-  window_.setKeyRepeatEnabled(false);
   window_.setVerticalSyncEnabled(true);
 }
 
+void Application::setFullscreen(bool const fullscreen,
+                                bool const recreateWindow) {
+  if (fullscreen != (windowStyle_ & Style::Fullscreen)) {
+    windowStyle_ ^= Style::Fullscreen;
+    if (recreateWindow) {
+      window_.create(videoMode_, windowTitle_, windowStyle_);
+    }
+  }
+}
+
+void Application::resize(Vector2u const newSize, bool const recreateWindow) {
+  videoMode_.width = newSize.x;
+  videoMode_.height = newSize.y;
+  if (recreateWindow) {
+    window_.create(videoMode_, windowTitle_, windowStyle_);
+  }
+}
+
 void Application::run() {
-  auto const fullscreenVideoMode = VideoMode::getDesktopMode();
-  window_.create(fullscreenVideoMode, windowTitle_, Style::Fullscreen);
+  window_.create(videoMode_, windowTitle_, windowStyle_);
 
   Clock clock;
   Time accumulator;
@@ -43,9 +60,7 @@ void Application::run() {
   }
 }
 
-void Application::stopRunning() {
-  running_ = false;
-}
+void Application::stopRunning() { running_ = false; }
 
 void Application::setTargetUpdatesPerSecond(int const targetUpdatesPerSecond) {
   assert(targetUpdatesPerSecond > 0);

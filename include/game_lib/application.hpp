@@ -10,16 +10,23 @@ class Application {
   Application(sf::String const& windowTitle, int const targetUpdatesPerSecond = 60);
   ~Application() noexcept = default;
 
+  void setFullscreen(bool const fullscreen, bool const recreateWindow = true);
+  void resize(sf::Vector2u const newSize, bool const recreateWindow = true);
+
   void run();
   void stopRunning();
 
   void setTargetUpdatesPerSecond(int const targetUpdatesPerSecond);
+
+  sf::Window const& getWindow() const { return window_; }
 
  protected:
   ApplicationStateStack stateStack_;
 
  private:
   sf::String windowTitle_;
+  sf::Uint32 windowStyle_;
+  sf::VideoMode videoMode_;
   sf::RenderWindow window_;
   std::vector<sf::Event> events_;
   int targetUpdatesPerSecond_;
