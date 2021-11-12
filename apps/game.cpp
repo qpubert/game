@@ -3,7 +3,6 @@
 #include <unistd.h>
 
 #include <SFML/Window/Event.hpp>
-#include <iostream>
 
 #include "game_lib/tilemap.hpp"
 #include "game_lib/tileset.hpp"
