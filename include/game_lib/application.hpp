@@ -11,6 +11,7 @@ class Application {
   ~Application() noexcept = default;
 
   void setFullscreen(bool const fullscreen, bool const recreateWindow = true);
+  void setResizable(bool const resizable, bool const recreateWindow = true);
   void resize(sf::Vector2u const newSize, bool const recreateWindow = true);
 
   void run();

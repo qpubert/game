@@ -26,6 +26,16 @@ void Application::setFullscreen(bool const fullscreen,
   }
 }
 
+void Application::setResizable(bool const resizable,
+                               bool const recreateWindow) {
+  if (resizable != (windowStyle_ & Style::Resize)) {
+    windowStyle_ ^= Style::Resize;
+    if (recreateWindow) {
+      window_.create(videoMode_, windowTitle_, windowStyle_);
+    }
+  }
+}
+
 void Application::resize(Vector2u const newSize, bool const recreateWindow) {
   videoMode_.width = newSize.x;
   videoMode_.height = newSize.y;
