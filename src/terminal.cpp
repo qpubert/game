@@ -25,7 +25,7 @@ void Terminal::handleEvents(vector<Event> const& events) {
     if (event.type == Event::TextEntered) {
       if (event.text.unicode == '\b' && !inputBuffer_.isEmpty()) {
         inputBuffer_.erase(inputBuffer_.getSize() - 1);
-      } else if (event.text.unicode == '\r') {
+      } else if (event.text.unicode == '\r' || event.text.unicode == '\n') {
         continue;
       } else {
         inputBuffer_ += event.text.unicode;
