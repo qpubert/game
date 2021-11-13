@@ -16,7 +16,7 @@ TilemapEditorState::TilemapEditorState(TilemapEditor& tilemapEditor)
       view_(static_cast<Vector2f>(tilemapEditor.getWindow().getSize()) / 2.0f,
             static_cast<Vector2f>(tilemapEditor.getWindow().getSize())) {
   assert(
-      terminalFont_.loadFromFile(RESOURCE_PATH "/ttf/Inconsolata-Regular.ttf"));
+      terminalFont_.loadFromFile(RESOURCE_PATH "/ttf/Roboto-Regular.ttf"));
   terminal_.setFont(terminalFont_, false);
 }
 
