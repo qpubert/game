@@ -15,4 +15,4 @@ target_link_libraries(game_lib
     PRIVATE sfml-system sfml-window sfml-graphics sfml-audio sfml-network)
 
 # All users of this library will need at least C++11
-target_compile_features(game_lib PUBLIC cxx_std_11)
+target_compile_features(game_lib PUBLIC cxx_std_17)

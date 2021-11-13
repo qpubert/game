@@ -1,5 +1,5 @@
 add_executable(game_app game_app.cpp game.cpp)
-# target_compile_features(game_app PRIVATE cxx_std_17)
+target_compile_features(game_app PRIVATE cxx_std_17)
 
 target_link_libraries(game_app PRIVATE game_lib)
 
@@ -20,7 +20,7 @@ add_executable(tilemap_editor_app
     tilemap_editor.cpp
     tilemap_editor_app.cpp
     tilemap_editor_state.cpp)
-# target_compile_features(game_app PRIVATE cxx_std_17)
+target_compile_features(game_app PRIVATE cxx_std_17)
 
 target_link_libraries(tilemap_editor_app PRIVATE game_lib)
 
