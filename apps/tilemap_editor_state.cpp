@@ -12,7 +12,9 @@ using namespace std;
 
 TilemapEditorState::TilemapEditorState(TilemapEditor& tilemapEditor)
     : ApplicationState(tilemapEditor),
-      terminal_(tilemapEditor.getWindow().getSize()) {
+      terminal_(tilemapEditor.getWindow().getSize()),
+      view_(static_cast<Vector2f>(tilemapEditor.getWindow().getSize()) / 2.0f,
+            static_cast<Vector2f>(tilemapEditor.getWindow().getSize())) {
   assert(
       terminalFont_.loadFromFile(RESOURCE_PATH "/ttf/Inconsolata-Regular.ttf"));
   terminal_.setFont(terminalFont_, false);
@@ -21,6 +23,12 @@ TilemapEditorState::TilemapEditorState(TilemapEditor& tilemapEditor)
 void TilemapEditorState::doHandleEvents(vector<Event> const& events) {
   for (auto const& event : events) {
     switch (event.type) {
+      case Event::Resized: {
+        view_.setSize(Vector2f(event.size.width, event.size.height));
+        view_.setCenter(Vector2f(event.size.width / 2, event.size.height / 2));
+        break;
+      }
+
       case Event::Closed:
         getApplication().stopRunning();
         break;
@@ -42,11 +50,17 @@ void TilemapEditorState::doHandleEvents(vector<Event> const& events) {
 
   terminal_.handleEvents(events);
 }
+
 void TilemapEditorState::doUpdate(Time const elapsedTime) {
   terminal_.update(elapsedTime);
 }
 
 void TilemapEditorState::doRender(RenderTarget& target,
                                   RenderStates states) const {
+  auto const previewView = target.getView();
+  target.setView(view_);
+
   target.draw(terminal_, states);
+
+  target.setView(previewView);
 }
