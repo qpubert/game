@@ -4,6 +4,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/View.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
 
@@ -26,7 +27,7 @@ class Terminal : public sf::Drawable {
   sf::Text text_;
   sf::String historyBuffer_;
   sf::String inputBuffer_;
-  sf::Vector2u size_;
+  sf::View view_;
 };
 
 #endif  // TERMINAL_HPP
