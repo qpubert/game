@@ -1,6 +1,7 @@
 #include "game_lib/terminal.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <cmath>
 #include <iostream>
 
 using namespace sf;
@@ -70,30 +71,31 @@ void Terminal::draw(RenderTarget& target, RenderStates states) const {
   target.setView(previousView);
 }
 
-bool tryInsertingNewlineToPreventOverflow(String& buffer, Text& text,
-                                          float const horizontalThreshold) {
-  auto const bufferSize = buffer.getSize();
-  auto const font = text.getFont();
-  auto const characterSize = text.getCharacterSize();
-  auto const boldness = text.getStyle() & Text::Bold;
+void Terminal::wrapText() {
+  auto const width = view_.getSize().x;
+  auto const font = text_.getFont();
+  auto const characterSize = text_.getCharacterSize();
+  auto const boldness = text_.getStyle() & Text::Bold;
 
-  for (size_t characterIndex = 1; characterIndex < bufferSize;
+  auto buffer = text_.getString();
+  auto characterPos = 0.0f;
+  for (size_t characterIndex = 0; characterIndex < buffer.getSize();
        ++characterIndex) {
     auto const character = buffer[characterIndex];
-    auto const characterPos = text.findCharacterPos(characterIndex);
     auto const& characterGlyph =
         font->getGlyph(character, characterSize, boldness);
-    auto const characterWidth = characterGlyph.advance;
+    auto const characterWidth =
+        characterGlyph.advance * text_.getLetterSpacing();
 
-    if (buffer[characterIndex - 1] != '\n' && buffer[characterIndex] != '\n' &&
-        characterPos.x + characterWidth > horizontalThreshold) {
+    characterPos += characterWidth;
+    if (width < characterPos && character != '\n') {
       buffer.insert(characterIndex, '\n');
-      text.setString(buffer);
-      return true;
+      characterPos = characterWidth;
+      characterIndex++;
     }
   }
 
-  return false;
+  text_.setString(buffer);
 }
 
 void Terminal::computeLayout() {
@@ -107,9 +109,11 @@ void Terminal::computeLayout() {
   bufferCopy += inputBuffer_;
 
   text_.setString(bufferCopy);
-  while (tryInsertingNewlineToPreventOverflow(bufferCopy, text_, size.x))
-    ;
+  wrapText();
 
   auto const textLocalBounds = text_.getLocalBounds();
-  text_.setPosition(0, size.y - textLocalBounds.top - textLocalBounds.height);
+  auto const textLineHeight = text_.getCharacterSize() * text_.getLineSpacing();
+  text_.setPosition(
+      0, size.y - textLocalBounds.top -
+             ceil(textLocalBounds.height / textLineHeight) * textLineHeight);
 }
