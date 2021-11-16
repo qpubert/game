@@ -15,8 +15,9 @@ TilemapEditorState::TilemapEditorState(TilemapEditor& tilemapEditor)
       terminal_(tilemapEditor.getWindow().getSize()),
       view_(static_cast<Vector2f>(tilemapEditor.getWindow().getSize()) / 2.0f,
             static_cast<Vector2f>(tilemapEditor.getWindow().getSize())) {
-  assert(
-      terminalFont_.loadFromFile(RESOURCE_PATH "/ttf/Roboto-Regular.ttf"));
+  auto const fontLoaded =
+      terminalFont_.loadFromFile(RESOURCE_PATH "/ttf/Roboto-Regular.ttf");
+  assert(fontLoaded);
   terminal_.setFont(terminalFont_, false);
 }
 
