@@ -21,7 +21,7 @@ class Terminal : public sf::Drawable {
                     sf::RenderStates states) const final override;
 
   void computeLayout();
-  void wrapText();
+  sf::String wrapText();
 
  private:
   sf::RectangleShape background_;
