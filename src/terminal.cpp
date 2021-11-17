@@ -71,31 +71,57 @@ void Terminal::draw(RenderTarget& target, RenderStates states) const {
   target.setView(previousView);
 }
 
-void Terminal::wrapText() {
+String Terminal::wrapText() {
   auto const width = view_.getSize().x;
   auto const font = text_.getFont();
   auto const characterSize = text_.getCharacterSize();
   auto const boldness = text_.getStyle() & Text::Bold;
+  auto const whitespaceWidthWithoutLetterSpacing =
+      font->getGlyph(L' ', characterSize, boldness).advance;
+  auto const letterSpacingFactor = text_.getLetterSpacing();
+  auto const letterSpacing =
+      (whitespaceWidthWithoutLetterSpacing / 3.f) * (letterSpacingFactor - 1.f);
+  auto const whitespaceWidth =
+      whitespaceWidthWithoutLetterSpacing + letterSpacing;
+  auto const lineSpacingFactor = text_.getLineSpacing();
+  auto const lineSpacing =
+      font->getLineSpacing(characterSize) * lineSpacingFactor;
 
   auto buffer = text_.getString();
   auto characterPos = 0.0f;
+  Uint32 previousCharacter = 0;
   for (size_t characterIndex = 0; characterIndex < buffer.getSize();
        ++characterIndex) {
     auto const character = buffer[characterIndex];
     auto const& characterGlyph =
         font->getGlyph(character, characterSize, boldness);
-    auto const characterWidth =
-        characterGlyph.advance * text_.getLetterSpacing();
+    auto const kerning =
+        font->getKerning(previousCharacter, character, characterSize);
 
-    characterPos += characterWidth;
-    if (width < characterPos && character != '\n') {
+    previousCharacter = character;
+    characterPos += kerning;
+    switch (character) {
+      case ' ':
+        characterPos += whitespaceWidth;
+        continue;
+      case '\t':
+        characterPos += whitespaceWidth * 4;
+        continue;
+      case '\n':
+        characterPos = 0;
+        continue;
+      default: break;
+    }
+
+    characterPos += characterGlyph.advance + letterSpacing;
+    if (width < characterPos) {
       buffer.insert(characterIndex, '\n');
-      characterPos = characterWidth;
+      characterPos = characterGlyph.advance + letterSpacing;
       characterIndex++;
     }
   }
 
-  text_.setString(buffer);
+  return buffer;
 }
 
 void Terminal::computeLayout() {
@@ -109,11 +135,15 @@ void Terminal::computeLayout() {
   bufferCopy += inputBuffer_;
 
   text_.setString(bufferCopy);
-  wrapText();
+  auto const wrappedText = wrapText();
+  text_.setString(wrappedText);
 
+  auto const nbNewLines = count(cbegin(wrappedText), cend(wrappedText), '\n');
+
+  auto const font = text_.getFont();
+  auto const characterSize = text_.getCharacterSize();
   auto const textLocalBounds = text_.getLocalBounds();
-  auto const textLineHeight = text_.getCharacterSize() * text_.getLineSpacing();
-  text_.setPosition(
-      0, size.y - textLocalBounds.top -
-             ceil(textLocalBounds.height / textLineHeight) * textLineHeight);
+  auto const textLineHeight =
+      font->getLineSpacing(characterSize) * text_.getLineSpacing();
+  text_.setPosition(0, size.y - (nbNewLines + 1) * textLineHeight);
 }
