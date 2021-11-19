@@ -1,24 +1,26 @@
 #include "game_lib/terminal.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <cmath>
-#include <iostream>
+
+#include "game_lib/application.hpp"
 
 using namespace sf;
 using namespace std;
 
-Terminal::Terminal(Vector2u const windowSize)
-    : view_(static_cast<Vector2f>(windowSize) / 2.0f,
-            static_cast<Vector2f>(windowSize)) {
-  background_.setFillColor(Color::Red);
+Terminal::Terminal(Application& application, Vector2f const position,
+                   Vector2f const size, float const padding)
+    : position_(position),
+      size_(size),
+      padding_(padding),
+      layoutNeedsComputation_(true),
+      application_(application) {
+  background_.setFillColor({0, 0, 0, 150});
   text_.setFillColor(Color::Green);
 }
 
 void Terminal::setFont(Font const& font, bool const recomputeLayout) {
   text_.setFont(font);
-  if (recomputeLayout) {
-    computeLayout();
-  }
+  layoutNeedsComputation_ = layoutNeedsComputation_ || recomputeLayout;
 }
 
 void Terminal::handleEvents(vector<Event> const& events) {
@@ -32,11 +34,7 @@ void Terminal::handleEvents(vector<Event> const& events) {
         inputBuffer_ += event.text.unicode;
       }
 
-      computeLayout();
-    } else if (event.type == Event::Resized) {
-      view_.setSize(Vector2f(event.size.width, event.size.height));
-      view_.setCenter(Vector2f(event.size.width / 2, event.size.height / 2));
-      computeLayout();
+      layoutNeedsComputation_ = true;
     } else if (event.type == Event::KeyPressed) {
       switch (event.key.code) {
         case Keyboard::Return: {
@@ -48,7 +46,7 @@ void Terminal::handleEvents(vector<Event> const& events) {
             inputBuffer_.clear();
           }
 
-          computeLayout();
+          layoutNeedsComputation_ = true;
           break;
         }
 
@@ -59,11 +57,16 @@ void Terminal::handleEvents(vector<Event> const& events) {
   }
 }
 
-void Terminal::update(Time const elapsedTime) {}
+void Terminal::update(Time const) {
+  if (layoutNeedsComputation_) {
+    computeLayout();
+    layoutNeedsComputation_ = false;
+  }
+}
 
-void Terminal::draw(RenderTarget& target, RenderStates states) const {
+void Terminal::draw(RenderTarget& target, RenderStates) const {
   auto const previousView = target.getView();
-  target.setView(view_);
+  target.setView(application_.getDefaultView());
 
   target.draw(background_);
   target.draw(text_);
@@ -71,8 +74,17 @@ void Terminal::draw(RenderTarget& target, RenderStates states) const {
   target.setView(previousView);
 }
 
+void Terminal::setPosition(sf::Vector2f const& position) {
+  position_ = position;
+  layoutNeedsComputation_ = true;
+}
+void Terminal::setSize(sf::Vector2f const& size) {
+  size_ = size;
+  layoutNeedsComputation_ = true;
+}
+
 String Terminal::wrapText() {
-  auto const width = view_.getSize().x;
+  auto const width = size_.x - 2 * padding_;
   auto const font = text_.getFont();
   auto const characterSize = text_.getCharacterSize();
   auto const boldness = text_.getStyle() & Text::Bold;
@@ -83,9 +95,6 @@ String Terminal::wrapText() {
       (whitespaceWidthWithoutLetterSpacing / 3.f) * (letterSpacingFactor - 1.f);
   auto const whitespaceWidth =
       whitespaceWidthWithoutLetterSpacing + letterSpacing;
-  auto const lineSpacingFactor = text_.getLineSpacing();
-  auto const lineSpacing =
-      font->getLineSpacing(characterSize) * lineSpacingFactor;
 
   auto buffer = text_.getString();
   auto characterPos = 0.0f;
@@ -101,21 +110,28 @@ String Terminal::wrapText() {
     previousCharacter = character;
     characterPos += kerning;
     switch (character) {
-      case ' ':
+      case L' ': {
         characterPos += whitespaceWidth;
         continue;
-      case '\t':
+      }
+
+      case L'\t': {
         characterPos += whitespaceWidth * 4;
         continue;
-      case '\n':
+      }
+
+      case L'\n': {
         characterPos = 0;
         continue;
-      default: break;
+      }
+
+      default:
+        break;
     }
 
     characterPos += characterGlyph.advance + letterSpacing;
     if (width < characterPos) {
-      buffer.insert(characterIndex, '\n');
+      buffer.insert(characterIndex, L'\n');
       characterPos = characterGlyph.advance + letterSpacing;
       characterIndex++;
     }
@@ -125,25 +141,24 @@ String Terminal::wrapText() {
 }
 
 void Terminal::computeLayout() {
-  auto const size = view_.getSize();
-
-  background_.setSize({size.x, size.y / 2});
-  background_.setPosition(0, size.y / 2);
+  background_.setSize(size_);
+  background_.setPosition(position_);
 
   auto bufferCopy = historyBuffer_;
-  bufferCopy += "\n > ";
+  bufferCopy += L"\n> ";
   bufferCopy += inputBuffer_;
 
   text_.setString(bufferCopy);
   auto const wrappedText = wrapText();
   text_.setString(wrappedText);
 
-  auto const nbNewLines = count(cbegin(wrappedText), cend(wrappedText), '\n');
-
+  auto const numberOfNewlines =
+      count(cbegin(wrappedText), cend(wrappedText), L'\n');
   auto const font = text_.getFont();
   auto const characterSize = text_.getCharacterSize();
-  auto const textLocalBounds = text_.getLocalBounds();
   auto const textLineHeight =
       font->getLineSpacing(characterSize) * text_.getLineSpacing();
-  text_.setPosition(0, size.y - (nbNewLines + 1) * textLineHeight);
+  text_.setPosition(position_.x + padding_,
+                    position_.y + size_.y -
+                        (numberOfNewlines + 1) * textLineHeight - padding_);
 }

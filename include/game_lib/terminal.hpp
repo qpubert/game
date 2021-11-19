@@ -8,9 +8,12 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
 
+class Application;
+
 class Terminal : public sf::Drawable {
  public:
-  Terminal(sf::Vector2u const windowSize);
+  Terminal(Application& application, sf::Vector2f const position,
+           sf::Vector2f const size, float const padding);
   ~Terminal() noexcept = default;
 
   void setFont(sf::Font const& font, bool const recomputeLayout = true);
@@ -20,6 +23,8 @@ class Terminal : public sf::Drawable {
   virtual void draw(sf::RenderTarget& target,
                     sf::RenderStates states) const final override;
 
+  void setPosition(sf::Vector2f const& position);
+  void setSize(sf::Vector2f const& size);
   void computeLayout();
   sf::String wrapText();
 
@@ -28,7 +33,12 @@ class Terminal : public sf::Drawable {
   sf::Text text_;
   sf::String historyBuffer_;
   sf::String inputBuffer_;
-  sf::View view_;
+  sf::Vector2f position_;
+  sf::Vector2f size_;
+  float padding_;
+  bool layoutNeedsComputation_;
+
+  Application& application_;
 };
 
 #endif  // TERMINAL_HPP
