@@ -4,9 +4,7 @@ using namespace sf;
 using namespace std;
 
 ApplicationState::ApplicationState(Application& application)
-    : application_(application), renderUnderlyingState_(false) {}
-
-Application& ApplicationState::getApplication() { return application_; }
+    : renderUnderlyingState_(false), application_(application) {}
 
 void ApplicationState::handleEvents(vector<Event> const& events) {
   doHandleEvents(events);

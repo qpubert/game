@@ -9,8 +9,8 @@ using namespace sf;
 using namespace std;
 
 Tilemap::Tilemap(Vector2f const &tileSize)
-    : tileSize_(tileSize),
-      tilesetPtr_(nullptr),
+    : tilesetPtr_(nullptr),
+      tileSize_(tileSize),
       vertexBuffer_(PrimitiveType::Quads, VertexBuffer::Usage::Static) {}
 
 Tilemap::Tilemap(Tileset const &tileset)
