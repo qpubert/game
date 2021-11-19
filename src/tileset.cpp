@@ -12,5 +12,6 @@ bool Tileset::loadTextureFromFile(string const &filename, IntRect const &area) {
 }
 
 sf::Vector2u Tileset::getTileTexCoords(unsigned int tile) const {
+  assert(tile < tileCount_);
   return {tileSize_.x * (tile % columns_), tileSize_.y * (tile / columns_)};
 }
