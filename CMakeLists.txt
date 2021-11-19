@@ -10,8 +10,13 @@ project(
 
 find_package(SFML 2 COMPONENTS graphics audio network REQUIRED)
 
-add_subdirectory(src)
+if(MSVC)
+  add_compile_options(/W4 /WX)
+else()
+  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+endif()
 
+add_subdirectory(src)
 add_subdirectory(apps)
 
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING)
