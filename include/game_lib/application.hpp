@@ -19,7 +19,8 @@ class Application {
 
   void setTargetUpdatesPerSecond(int const targetUpdatesPerSecond);
 
-  sf::Window const& getWindow() const { return window_; }
+  sf::View getDefaultView() const;
+  sf::Window const& getWindow() const noexcept { return window_; }
 
  protected:
   ApplicationStateStack stateStack_;

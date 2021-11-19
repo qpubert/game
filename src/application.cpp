@@ -77,6 +77,11 @@ void Application::setTargetUpdatesPerSecond(int const targetUpdatesPerSecond) {
   targetUpdatesPerSecond_ = targetUpdatesPerSecond;
 }
 
+View Application::getDefaultView() const {
+  auto const viewSize = static_cast<Vector2f>(window_.getSize());
+  return {viewSize / 2.0f, viewSize};
+}
+
 void Application::handleEvents() {
   events_.clear();
 
