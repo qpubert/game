@@ -19,6 +19,7 @@ class ApplicationState {
   virtual ~ApplicationState() noexcept = default;
 
   Application& getApplication() { return application_; }
+  Application const& getApplication() const { return application_; }
 
   void handleEvents(std::vector<sf::Event> const& events);
   void update(sf::Time const elapsedTime);
