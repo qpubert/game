@@ -12,8 +12,9 @@ class Tileset {
   bool loadTextureFromFile(std::string const& filename,
                            sf::IntRect const& area = sf::IntRect());
 
-  inline sf::Vector2u getTileSize() const { return tileSize_; };
-  inline sf::Texture const& getTexture() const { return texture_; }
+  inline sf::Vector2u getTileSize() const noexcept { return tileSize_; };
+  inline sf::Texture const& getTexture() const noexcept { return texture_; }
+  inline unsigned int getTileCount() const noexcept { return tileCount_; }
 
   sf::Vector2u getTileTexCoords(unsigned int tile) const;
 
