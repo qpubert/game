@@ -53,6 +53,17 @@ void TilemapEditorState::doHandleEvents(vector<Event> const& events) {
 }
 
 void TilemapEditorState::doUpdate(Time const elapsedTime) {
+  auto const& application = getApplication();
+  auto const renderTargetSize = application.getWindow().getSize();
+  if (renderTargetSize_ != renderTargetSize) {
+    renderTargetSize_ = renderTargetSize;
+
+    auto const viewSize = application.getDefaultView().getSize();
+    view_.setSize(viewSize);
+    terminal_.setPosition(targetTerminalPosition());
+    terminal_.setSize(targetTerminalSize());
+  }
+
   terminal_.update(elapsedTime);
 }
 

@@ -18,6 +18,7 @@ class TilemapEditorState final : public ApplicationState {
   sf::Font terminalFont_;
   Terminal terminal_;
   sf::View view_;
+  sf::Vector2u renderTargetSize_;
 
   void doHandleEvents(std::vector<sf::Event> const& events) final override;
   void doUpdate(sf::Time const elapsedTime) final override;
