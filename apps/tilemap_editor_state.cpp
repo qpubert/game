@@ -69,10 +69,10 @@ void TilemapEditorState::doUpdate(Time const elapsedTime) {
 
 void TilemapEditorState::doRender(RenderTarget& target,
                                   RenderStates states) const {
-  auto const previewView = target.getView();
+  auto const previousView = target.getView();
   target.setView(view_);
 
   target.draw(terminal_, states);
 
-  target.setView(previewView);
+  target.setView(previousView);
 }
