@@ -5,12 +5,13 @@
 using namespace sf;
 using namespace std;
 
-TilemapEditor::TilemapEditor() : Application("Tilemap editor") {
-  auto const desktopMode = VideoMode::getDesktopMode();
+VideoMode getInitialVideoMode() {
+  auto videoMode = VideoMode::getDesktopMode();
+  videoMode.width /= 2;
+  videoMode.height /= 2;
+  return videoMode;
+} 
 
-  setFullscreen(false, false);
-  setResizable(true, false);
-  resize({desktopMode.width / 2, desktopMode.height / 2}, false);
-
+TilemapEditor::TilemapEditor() : Application(getInitialVideoMode(), "Tilemap editor", Style::Default) {
   stateStack_.pushState(make_unique<TilemapEditorState>(*this));
 }

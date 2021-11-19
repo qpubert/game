@@ -12,11 +12,11 @@ using namespace std;
 
 TilemapEditorState::TilemapEditorState(TilemapEditor& tilemapEditor)
     : ApplicationState(tilemapEditor),
-      terminal_(tilemapEditor.getWindow().getSize()),
-      view_(static_cast<Vector2f>(tilemapEditor.getWindow().getSize()) / 2.0f,
-            static_cast<Vector2f>(tilemapEditor.getWindow().getSize())) {
-  auto const fontLoaded =
-      terminalFont_.loadFromFile(RESOURCE_PATH "/ttf/Roboto-Regular.ttf");
+      terminal_(tilemapEditor, targetTerminalPosition(), targetTerminalSize(),
+                20.0f),
+      view_(tilemapEditor.getDefaultView()) {
+  [[maybe_unused]] auto const fontLoaded =
+      terminalFont_.loadFromFile(RESOURCE_PATH "/ttf/Inconsolata-Regular.ttf");
   assert(fontLoaded);
   terminal_.setFont(terminalFont_, false);
 }
@@ -34,25 +34,30 @@ sf::Vector2f TilemapEditorState::targetTerminalSize() const {
 void TilemapEditorState::doHandleEvents(vector<Event> const& events) {
   for (auto const& event : events) {
     switch (event.type) {
-      case Event::Resized: {
-        view_.setSize(Vector2f(event.size.width, event.size.height));
-        view_.setCenter(Vector2f(event.size.width / 2, event.size.height / 2));
+      case Event::Closed: {
+        getApplication().stopRunning();
         break;
       }
 
-      case Event::Closed:
-        getApplication().stopRunning();
-        break;
-
-      case Event::KeyPressed:
+      case Event::KeyPressed: {
         switch (event.key.code) {
-          case Keyboard::Escape:
+          case Keyboard::Escape: {
             getApplication().stopRunning();
             break;
+          }
+
+          case Keyboard::F11: {
+            auto& app = getApplication();
+            app.setFullscreen(!app.isFullscreen());
+            break;
+          }
 
           default:
             break;
         }
+
+        break;
+      }
 
       default:
         break;

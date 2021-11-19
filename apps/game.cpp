@@ -10,4 +10,11 @@
 using namespace sf;
 using namespace std;
 
-Game::Game() : Application("Game application") {}
+VideoMode getInitialVideoMode() {
+    auto videoMode = VideoMode::getDesktopMode();
+    videoMode.width /= 2;
+    videoMode.height /= 2;
+    return videoMode;
+}
+
+Game::Game() : Application(getInitialVideoMode(), "Game application", Style::Fullscreen) {}

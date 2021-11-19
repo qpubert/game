@@ -7,46 +7,48 @@
 using namespace sf;
 using namespace std;
 
-Application::Application(String const &windowTitle,
+Application::Application(VideoMode const& windowVideoMode,
+                         String const& windowTitle, Uint32 const windowStyle,
                          int const targetUpdatesPerSecond)
-    : windowTitle_(windowTitle),
-      windowStyle_(Style::Close),
+    : windowedVideoMode_(windowVideoMode),
+      fullscreenVideoMode_(VideoMode::getFullscreenModes().front()),
+      currentVideoModePtr_((windowStyle & Style::Fullscreen)
+                               ? &fullscreenVideoMode_
+                               : &windowedVideoMode_),
+      windowTitle_(windowTitle),
+      windowStyle_(windowStyle),
+      window_(*currentVideoModePtr_, windowTitle_, windowStyle_),
       targetUpdatesPerSecond_(targetUpdatesPerSecond),
-      running_(false) {
+      running_(false),
+      windowNeedsRecreation_(false) {
   window_.setVerticalSyncEnabled(true);
 }
 
-void Application::setFullscreen(bool const fullscreen,
-                                bool const recreateWindow) {
-  if (fullscreen != (windowStyle_ & Style::Fullscreen)) {
-    windowStyle_ ^= Style::Fullscreen;
-    if (recreateWindow) {
-      window_.create(videoMode_, windowTitle_, windowStyle_);
-    }
+void Application::setStyle(Uint32 const style) {
+  if (windowStyle_ != style) {
+    windowStyle_ = style;
+    windowNeedsRecreation_ = true;
   }
 }
 
-void Application::setResizable(bool const resizable,
-                               bool const recreateWindow) {
-  if (resizable != (windowStyle_ & Style::Resize)) {
-    windowStyle_ ^= Style::Resize;
-    if (recreateWindow) {
-      window_.create(videoMode_, windowTitle_, windowStyle_);
-    }
-  }
+void Application::setFullscreen(bool const fullscreen) {
+  setStyle((windowStyle_ & ~Style::Fullscreen) |
+           (fullscreen ? Style::Fullscreen : 0));
+  currentVideoModePtr_ =
+      fullscreen ? &fullscreenVideoMode_ : &windowedVideoMode_;
 }
 
-void Application::resize(Vector2u const newSize, bool const recreateWindow) {
-  videoMode_.width = newSize.x;
-  videoMode_.height = newSize.y;
-  if (recreateWindow) {
-    window_.create(videoMode_, windowTitle_, windowStyle_);
-  }
+void Application::setResizable(bool const resizable) {
+  setStyle((windowStyle_ & ~Style::Resize) | (resizable ? Style::Resize : 0));
+}
+
+void Application::resize(Vector2u const newSize) {
+  windowedVideoMode_.width = newSize.x;
+  windowedVideoMode_.height = newSize.y;
+  windowNeedsRecreation_ = true;
 }
 
 void Application::run() {
-  window_.create(videoMode_, windowTitle_, windowStyle_);
-
   Clock clock;
   Time accumulator;
 
@@ -64,9 +66,7 @@ void Application::run() {
       }
     }
 
-    window_.clear();
     render();
-    window_.display();
   }
 }
 
@@ -94,7 +94,16 @@ void Application::handleEvents() {
 }
 
 void Application::update(Time const elapsedTime) {
+  if (windowNeedsRecreation_) {
+    windowNeedsRecreation_ = false;
+    window_.create(*currentVideoModePtr_, windowTitle_, windowStyle_);
+  }
+
   stateStack_.update(elapsedTime);
 }
 
-void Application::render() { stateStack_.render(window_); }
+void Application::render() {
+  window_.clear(Color::White);
+  stateStack_.render(window_);
+  window_.display();
+}
