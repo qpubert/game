@@ -21,6 +21,16 @@ TilemapEditorState::TilemapEditorState(TilemapEditor& tilemapEditor)
   terminal_.setFont(terminalFont_, false);
 }
 
+sf::Vector2f TilemapEditorState::targetTerminalPosition() const {
+  return {0, static_cast<float>(getApplication().getWindow().getSize().y / 2)};
+}
+
+sf::Vector2f TilemapEditorState::targetTerminalSize() const {
+  auto const windowSize =
+      static_cast<Vector2f>(getApplication().getWindow().getSize());
+  return {windowSize.x, windowSize.y / 2};
+}
+
 void TilemapEditorState::doHandleEvents(vector<Event> const& events) {
   for (auto const& event : events) {
     switch (event.type) {

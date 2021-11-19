@@ -14,6 +14,9 @@ class TilemapEditorState final : public ApplicationState {
   TilemapEditorState(TilemapEditor& tilemapEditor);
   ~TilemapEditorState() noexcept = default;
 
+  sf::Vector2f targetTerminalPosition() const;
+  sf::Vector2f targetTerminalSize() const;
+
  private:
   sf::Font terminalFont_;
   Terminal terminal_;
