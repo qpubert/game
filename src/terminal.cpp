@@ -149,6 +149,7 @@ void Terminal::computeLayout() {
   auto bufferCopy = historyBuffer_;
   bufferCopy += L"\n> ";
   bufferCopy += inputBuffer_;
+  bufferCopy += L'_';
 
   text_.setString(bufferCopy);
   auto const wrappedText = wrapText();
