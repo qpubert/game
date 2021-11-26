@@ -28,7 +28,7 @@ void Terminal::handleEvents(vector<Event> const& events) {
     if (event.type == Event::TextEntered) {
       if (event.text.unicode == '\b') {
         if (!inputBuffer_.isEmpty()) {
-        inputBuffer_.erase(inputBuffer_.getSize() - 1);
+          inputBuffer_.erase(inputBuffer_.getSize() - 1);
         }
       } else if (event.text.unicode == '\r' || event.text.unicode == '\n') {
         continue;
@@ -152,15 +152,29 @@ void Terminal::computeLayout() {
   bufferCopy += L'_';
 
   text_.setString(bufferCopy);
-  auto const wrappedText = wrapText();
-  text_.setString(wrappedText);
+  wrapText();
 
-  auto const numberOfNewlines =
-      count(cbegin(wrappedText), cend(wrappedText), L'\n');
-  auto const font = text_.getFont();
+  auto const wrappedText = text_.getString();
   auto const characterSize = text_.getCharacterSize();
+  auto const font = text_.getFont();
   auto const textLineHeight =
       font->getLineSpacing(characterSize) * text_.getLineSpacing();
+
+  auto numberOfLinesThatFit =
+      max(0, static_cast<int>((size_.y - 2 * padding_) / textLineHeight));
+  auto utf32String = wrappedText.toUtf32();
+  auto beginOfOverlappingSubstring = utf32String.crbegin();
+  while (numberOfLinesThatFit-- > 0 &&
+         beginOfOverlappingSubstring != utf32String.crend()) {
+    beginOfOverlappingSubstring =
+        find(beginOfOverlappingSubstring + 1, utf32String.crend(), L'\n');
+  }
+  utf32String.erase(cbegin(utf32String), beginOfOverlappingSubstring.base());
+  text_.setString(utf32String);
+
+  auto const numberOfNewlines =
+      count(cbegin(utf32String), cend(utf32String), L'\n');
+
   text_.setPosition(position_.x + padding_,
                     position_.y + size_.y -
                         (numberOfNewlines + 1) * textLineHeight - padding_);
