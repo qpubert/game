@@ -80,6 +80,7 @@ void Terminal::setPosition(sf::Vector2f const& position) {
   position_ = position;
   layoutNeedsComputation_ = true;
 }
+
 void Terminal::setSize(sf::Vector2f const& size) {
   size_ = size;
   layoutNeedsComputation_ = true;
