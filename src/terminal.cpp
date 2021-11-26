@@ -83,7 +83,7 @@ void Terminal::setSize(sf::Vector2f const& size) {
   layoutNeedsComputation_ = true;
 }
 
-String Terminal::wrapText() {
+void Terminal::wrapText() {
   auto const width = size_.x - 2 * padding_;
   auto const font = text_.getFont();
   auto const characterSize = text_.getCharacterSize();
@@ -137,7 +137,7 @@ String Terminal::wrapText() {
     }
   }
 
-  return buffer;
+  text_.setString(buffer);
 }
 
 void Terminal::computeLayout() {

@@ -26,7 +26,7 @@ class Terminal : public sf::Drawable {
   void setPosition(sf::Vector2f const& position);
   void setSize(sf::Vector2f const& size);
   void computeLayout();
-  sf::String wrapText();
+  void wrapText();
 
  private:
   sf::RectangleShape background_;
